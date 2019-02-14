@@ -3,10 +3,12 @@ package com.honghe.jetpacktest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.print.PrintManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -111,8 +113,18 @@ public class MainActivity extends AppCompatActivity {
             case R.id.getData:
                 getData();
                 break;
+            case R.id.print:
+                doPdfPrint("1.pdf");
+                break;
         }
     }
+
+    private void doPdfPrint(String filePath) {
+        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+        MyPrintPdfAdapter myPrintAdapter = new MyPrintPdfAdapter(MainActivity.this, filePath, true);
+        printManager.print("jobName", myPrintAdapter, null);
+    }
+
 
     public void getData() {
         new Thread(new Runnable() {
