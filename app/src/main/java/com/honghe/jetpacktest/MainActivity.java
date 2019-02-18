@@ -4,15 +4,24 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.print.PrintManager;
 import android.support.annotation.Nullable;
+import android.support.v4.print.PrintHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +40,7 @@ import com.honghe.jetpacktest.livedata.NameViewModel;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     Man man;
 
     AppDatabase db;
+
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +115,33 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 //Dagger
         DaggerMainActivityComponent.create().inject(this);
+
+        //print
+        webView = binding.webView;
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+
+        webSettings.setAppCacheEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+        });
+        binding.webView.loadUrl(binding.etUrl.getText().toString());
+        binding.etUrl.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_UNSPECIFIED || actionId ==
+                        EditorInfo.IME_ACTION_SEND || (event != null && event.getKeyCode() ==
+                        KeyEvent.KEYCODE_ENTER)) {
+                    binding.webView.loadUrl(binding.etUrl.getText().toString());
+                }
+                return true;
+            }
+        });
     }
 
     public void onclick(View view) {
@@ -114,15 +153,45 @@ public class MainActivity extends AppCompatActivity {
                 getData();
                 break;
             case R.id.print:
-                doPdfPrint("1.pdf");
+//                doPdfPrint("1.pdf");
+                doBmpPrint(getBitmap());
+                break;
+            case R.id.printWebView:
+                doPrintWebview();
                 break;
         }
+    }
+
+    private void doPrintWebview() {
+        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+        printManager.print("test", webView.createPrintDocumentAdapter(), null);
+    }
+
+    private Bitmap getBitmap() {
+        Bitmap bitmap = null;
+        try {
+            bitmap = BitmapFactory.decodeStream(getAssets().open("xingkong.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
     private void doPdfPrint(String filePath) {
         PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
         MyPrintPdfAdapter myPrintAdapter = new MyPrintPdfAdapter(MainActivity.this, filePath, true);
         printManager.print("jobName", myPrintAdapter, null);
+    }
+
+    private void doBmpPrint(Bitmap bitmap) {
+        if (PrintHelper.systemSupportsPrint()) {
+            PrintHelper printHelper = new PrintHelper(MainActivity.this);
+            printHelper.setScaleMode(PrintHelper.SCALE_MODE_FIT);
+            printHelper.printBitmap("bmp", bitmap);
+            Log.e(TAG, "doBmpPrint: ");
+        } else {
+            Toast.makeText(getApplicationContext(), "不支持图片打印", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

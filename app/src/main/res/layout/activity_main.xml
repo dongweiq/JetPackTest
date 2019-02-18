@@ -55,12 +55,20 @@
             android:layout_height="wrap_content"
             android:onClick="onclick"
             android:text="getData" />
+
         <Button
             android:id="@+id/print"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onclick"
             android:text="print" />
+
+        <Button
+            android:id="@+id/printWebView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onclick"
+            android:text="printWebView" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -94,6 +102,19 @@
             android:layout_height="wrap_content"
             android:text="@{array[1]}" />
 
+        <EditText
+            android:id="@+id/et_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSend"
+            android:singleLine="true"
+            android:inputType="text"
+            android:text="https://www.baidu.com" />
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 </layout>
