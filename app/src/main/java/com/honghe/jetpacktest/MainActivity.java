@@ -1,5 +1,6 @@
 package com.honghe.jetpacktest;
 
+import android.app.Application;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
@@ -9,11 +10,11 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.print.PrintManager;
 import android.support.annotation.Nullable;
-import android.support.v4.print.PrintHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -36,11 +37,19 @@ import com.honghe.jetpacktest.eventBus.MessageEvent;
 import com.honghe.jetpacktest.lifecycle.Java8Observer;
 import com.honghe.jetpacktest.livedata.MyLiveData;
 import com.honghe.jetpacktest.livedata.NameViewModel;
+import com.tr.officelib.callback.OfficeLibInitOfficeCallBack;
+import com.tr.officelib.callback.OfficeLibOpenFileCallBack;
+import com.tr.officelib.util.OfficeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,12 +66,42 @@ public class MainActivity extends AppCompatActivity {
     Man man;
 
     AppDatabase db;
-
+    String fileName = "1.txt";
+    String path = Environment.getExternalStorageDirectory().getPath() + "/" + fileName;
     WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            OfficeUtil.getInstance().init((Application) getApplicationContext(), new OfficeLibInitOfficeCallBack() {
+                @Override
+                public void initOk() {
+                    super.initOk();
+                    Log.e(TAG, "initOk: ");
+                }
+
+                @Override
+                public void initFail() {
+                    super.initFail();
+                    Log.e(TAG, "initFail: ");
+                }
+
+                @Override
+                public void init(int progress) {
+                    super.init(progress);
+                    Log.e(TAG, "init: ");
+                }
+
+                @Override
+                public void initDf() {
+                    super.initDf();
+                    Log.e(TAG, "initDf: ");
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //dataBinding
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.tv.setText("init");
@@ -142,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        copyFile(fileName, path);
     }
 
     public void onclick(View view) {
@@ -153,19 +193,34 @@ public class MainActivity extends AppCompatActivity {
                 getData();
                 break;
             case R.id.print:
-//                doPdfPrint("1.pdf");
-                doBmpPrint(getBitmap());
+                PrintHelper.printAssetPDF(MainActivity.this, "1.pdf");
+                break;
+            case R.id.printBmp:
+                PrintHelper.printBmp(MainActivity.this, getBitmap());
                 break;
             case R.id.printWebView:
-                doPrintWebview();
+                PrintHelper.printWebView(MainActivity.this, webView);
+                break;
+            case R.id.printX5WebView:
+                try {
+                    OfficeUtil.getInstance().openLocalFile(MainActivity.this, path, "test", new OfficeLibOpenFileCallBack() {
+                        @Override
+                        public void canOpen() {
+                            super.canOpen();
+                        }
+
+                        @Override
+                        public void failOpen(String failMsg) {
+                            super.failOpen(failMsg);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
 
-    private void doPrintWebview() {
-        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
-        printManager.print("test", webView.createPrintDocumentAdapter(), null);
-    }
 
     private Bitmap getBitmap() {
         Bitmap bitmap = null;
@@ -177,20 +232,26 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
 
-    private void doPdfPrint(String filePath) {
-        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
-        MyPrintPdfAdapter myPrintAdapter = new MyPrintPdfAdapter(MainActivity.this, filePath, true);
-        printManager.print("jobName", myPrintAdapter, null);
-    }
-
-    private void doBmpPrint(Bitmap bitmap) {
-        if (PrintHelper.systemSupportsPrint()) {
-            PrintHelper printHelper = new PrintHelper(MainActivity.this);
-            printHelper.setScaleMode(PrintHelper.SCALE_MODE_FIT);
-            printHelper.printBitmap("bmp", bitmap);
-            Log.e(TAG, "doBmpPrint: ");
-        } else {
-            Toast.makeText(getApplicationContext(), "不支持图片打印", Toast.LENGTH_SHORT).show();
+    public void copyFile(String from, String to) {
+        Log.e(TAG, "copyFile: Path\t" + to);
+        try {
+            int bytesum = 0;
+            int byteread = 0;
+            File toFile = new File(to);
+            InputStream inStream = getResources().getAssets().open(from);//将assets中的内容以流的形式展示出来
+            if (toFile.exists()) {
+                toFile.delete();
+            }
+            OutputStream fs = new BufferedOutputStream(new FileOutputStream(toFile));//to为要写入sdcard中的文件名称
+            byte[] buffer = new byte[1024];
+            while ((byteread = inStream.read(buffer)) != -1) {
+                bytesum += byteread;
+                fs.write(buffer, 0, byteread);
+            }
+            inStream.close();
+            fs.close();
+        } catch (Exception e) {
+            Log.e(TAG, "copyFile: failed");
         }
     }
 

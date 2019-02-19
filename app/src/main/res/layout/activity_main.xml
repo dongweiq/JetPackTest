@@ -56,19 +56,40 @@
             android:onClick="onclick"
             android:text="getData" />
 
-        <Button
-            android:id="@+id/print"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onclick"
-            android:text="print" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/printWebView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onclick"
-            android:text="printWebView" />
+            <Button
+                android:id="@+id/print"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclick"
+                android:text="print" />
+
+            <Button
+                android:id="@+id/printBmp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclick"
+                android:text="printBmp" />
+
+            <Button
+                android:id="@+id/printWebView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclick"
+                android:text="printWebView" />
+
+            <Button
+                android:id="@+id/printX5WebView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclick"
+                android:text="printX5WebView" />
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -107,8 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionSend"
-            android:singleLine="true"
             android:inputType="text"
+            android:singleLine="true"
             android:text="https://www.baidu.com" />
 
         <WebView
