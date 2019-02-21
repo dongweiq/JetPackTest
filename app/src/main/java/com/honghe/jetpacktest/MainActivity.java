@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     Man man;
 
     AppDatabase db;
-    String fileName = "1.txt";
+    String fileName = "1.pdf";
     String path = Environment.getExternalStorageDirectory().getPath() + "/" + fileName;
     WebView webView;
 
@@ -203,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.printX5WebView:
                 try {
-                    OfficeUtil.getInstance().openLocalFile(MainActivity.this, path, "test", new OfficeLibOpenFileCallBack() {
+                    OfficeUtil.getInstance().openLocalFile(MainActivity.this, path, "test", true, new OfficeLibOpenFileCallBack() {
                         @Override
                         public void canOpen() {
                             super.canOpen();
@@ -217,6 +218,9 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
+            case R.id.startDraw:
+                startActivity(new Intent(this, DrawActivity.class));
                 break;
         }
     }
