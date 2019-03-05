@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 PrintHelper.printAssetPDF(MainActivity.this, "1.pdf");
                 break;
             case R.id.printBmp:
-                PrintHelper.printBmp(MainActivity.this, getBitmap());
+                PrintHelper.printBmp2(MainActivity.this, getBitmap());
                 break;
             case R.id.printWebView:
                 PrintHelper.printWebView(MainActivity.this, webView);

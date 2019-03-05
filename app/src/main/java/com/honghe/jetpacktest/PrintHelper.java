@@ -21,6 +21,12 @@ public class PrintHelper {
         }
     }
 
+    public static void printBmp2(Context context, Bitmap bitmap) {
+        PrintManager printManager = (PrintManager) context.getSystemService(Context.PRINT_SERVICE);
+        MyPrintBmpAdapter myPrintBmpAdapter = new MyPrintBmpAdapter(context, bitmap);
+        printManager.print("printBmp2", myPrintBmpAdapter, null);
+    }
+
     public static void printWebView(Context context, WebView webView) {
         PrintManager printManager = (PrintManager) context.getSystemService(Context.PRINT_SERVICE);
         printManager.print("printWebView", webView.createPrintDocumentAdapter(), null);
@@ -39,7 +45,7 @@ public class PrintHelper {
     }
 
     public static void printView(Context context, View view) {
-        printBmp(context, getCacheBitmapFromView(view));
+        printBmp2(context, getCacheBitmapFromView(view));
     }
 
     public static Bitmap getCacheBitmapFromView(View view) {
