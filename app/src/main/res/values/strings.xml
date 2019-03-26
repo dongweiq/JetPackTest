@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">JetPackTest</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="app_id">5a69472e</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

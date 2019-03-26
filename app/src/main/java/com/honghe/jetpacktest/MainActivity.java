@@ -6,7 +6,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,6 +40,8 @@ import com.honghe.jetpacktest.eventBus.MessageEvent;
 import com.honghe.jetpacktest.lifecycle.Java8Observer;
 import com.honghe.jetpacktest.livedata.MyLiveData;
 import com.honghe.jetpacktest.livedata.NameViewModel;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.tr.officelib.callback.OfficeLibInitOfficeCallBack;
 import com.tr.officelib.callback.OfficeLibOpenFileCallBack;
 import com.tr.officelib.util.OfficeUtil;
@@ -183,6 +187,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         copyFile(fileName, path);
+        StringBuffer param = new StringBuffer();
+        param.append("appid=" + MainActivity.this.getApplicationContext().getString(R.string.app_id));
+        param.append(",");
+        // 设置使用v5+
+        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
+        SpeechUtility.createUtility(MainActivity.this.getApplicationContext(), param.toString());
+        com.iflytek.cloud.Setting.setShowLog(false);
+        AmapTTSController.getInstance(getApplicationContext()).init();
     }
 
     public void onclick(View view) {
@@ -221,6 +233,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.startDraw:
                 startActivity(new Intent(this, DrawActivity.class));
+                break;
+            case R.id.openActivity2:
+                startActivity(new Intent(this, FullscreenActivity.class));
+                break;
+            case R.id.mqttTest:
+                startActivity(new Intent(this, MqttActivity.class));
                 break;
         }
     }
@@ -264,6 +282,8 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.e("wanghh", "orientation: " + MainActivity.this.getWindowManager().getDefaultDisplay().getRotation());
+
                 List<User> userList = db.userDao().getAll();
                 for (User data : userList) {
                     Log.e(TAG, "onCreate: " + data.getFirstName());
