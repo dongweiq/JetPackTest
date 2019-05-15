@@ -15,7 +15,7 @@
         android:imeOptions="actionSend"
         android:inputType="text"
         android:singleLine="true"
-        android:text="http://www.sogou.com" />
+        android:text="http://192.168.1.100:7001/show?id=5cc8022fce0a485617dd9f18" />
 
     <WebView
         android:id="@+id/webView"

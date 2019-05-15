@@ -40,11 +40,6 @@ import com.honghe.jetpacktest.eventBus.MessageEvent;
 import com.honghe.jetpacktest.lifecycle.Java8Observer;
 import com.honghe.jetpacktest.livedata.MyLiveData;
 import com.honghe.jetpacktest.livedata.NameViewModel;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
-import com.tr.officelib.callback.OfficeLibInitOfficeCallBack;
-import com.tr.officelib.callback.OfficeLibOpenFileCallBack;
-import com.tr.officelib.util.OfficeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -78,35 +73,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            OfficeUtil.getInstance().init((Application) getApplicationContext(), new OfficeLibInitOfficeCallBack() {
-                @Override
-                public void initOk() {
-                    super.initOk();
-                    Log.e(TAG, "initOk: ");
-                }
-
-                @Override
-                public void initFail() {
-                    super.initFail();
-                    Log.e(TAG, "initFail: ");
-                }
-
-                @Override
-                public void init(int progress) {
-                    super.init(progress);
-                    Log.e(TAG, "init: ");
-                }
-
-                @Override
-                public void initDf() {
-                    super.initDf();
-                    Log.e(TAG, "initDf: ");
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 //dataBinding
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.tv.setText("init");
@@ -187,14 +153,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         copyFile(fileName, path);
-        StringBuffer param = new StringBuffer();
-        param.append("appid=" + MainActivity.this.getApplicationContext().getString(R.string.app_id));
-        param.append(",");
-        // 设置使用v5+
-        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
-        SpeechUtility.createUtility(MainActivity.this.getApplicationContext(), param.toString());
-        com.iflytek.cloud.Setting.setShowLog(false);
-        AmapTTSController.getInstance(getApplicationContext()).init();
     }
 
     public void onclick(View view) {
@@ -215,21 +173,6 @@ public class MainActivity extends AppCompatActivity {
                 PrintHelper.printWebView(MainActivity.this, webView);
                 break;
             case R.id.printX5WebView:
-                try {
-                    OfficeUtil.getInstance().openLocalFile(MainActivity.this, path, "test", true, new OfficeLibOpenFileCallBack() {
-                        @Override
-                        public void canOpen() {
-                            super.canOpen();
-                        }
-
-                        @Override
-                        public void failOpen(String failMsg) {
-                            super.failOpen(failMsg);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 break;
             case R.id.startDraw:
                 startActivity(new Intent(this, DrawActivity.class));

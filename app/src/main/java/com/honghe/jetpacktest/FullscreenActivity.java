@@ -12,9 +12,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
@@ -33,12 +35,11 @@ public class FullscreenActivity extends AppCompatActivity {
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new InJavaScriptLocalObj(), "java_obj");
+        webView.addJavascriptInterface(new InJavaScriptLocalObj(), "yunfan");
         webSettings.setDomStorageEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
         webSettings.setAppCacheEnabled(true);
-        AmapTTSController.getInstance(getApplicationContext()).playText("123456");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -63,7 +64,10 @@ public class FullscreenActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
             }
         });
-        webView.loadUrl(et_url.getText().toString());
+//        webView.loadUrl(et_url.getText().toString());
+//        webView.loadUrl("file:///android_asset/test-1/test.html");
+        webView.loadUrl("http://question.yunjiai.cn/question/result?id=5cd0ee1645ce525d5bdfa75d");
+//        webView.loadUrl("http://yunfan.yunjikj.cn");
         et_url.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -80,19 +84,29 @@ public class FullscreenActivity extends AppCompatActivity {
     public final class InJavaScriptLocalObj {
         @JavascriptInterface
         public void showSource(String html) {
-            Log.e("wanghh", "====>html=" + html);
+//            Log.e("wanghh", "====>html=" + html);
             Document doc = Jsoup.parse(html);
-            Elements elements = doc.select("p");
+//            Element element = doc.getElementById("divTitle1");
 //            tv_content.setText(doc.body().text());
-            String content = elements.text();
-            tv_content.setText(content);
-            AmapTTSController.getInstance(getApplicationContext()).playText(content);
+//            String content = element.text();
+            tv_content.setText(doc.wholeText());
+//            AmapTTSController.getInstance(getApplicationContext()).playText(content);
         }
 
         @JavascriptInterface
         public void showDescription(String str) {
-            Log.e("wanghh", "====>html=" + str);
+//            Log.e("wanghh", "====>html=" + str);
         }
+
+        @JavascriptInterface
+        public void JsToJavaInterface(final String param) {
+            Toast.makeText(getApplicationContext(), param, Toast.LENGTH_LONG).show();
+        }
+        @JavascriptInterface
+        public void TextCall(final String param){
+            Toast.makeText(getApplicationContext(), param, Toast.LENGTH_LONG).show();
+        }
+
     }
 
 }

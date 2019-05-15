@@ -168,7 +168,7 @@
             android:imeOptions="actionSend"
             android:inputType="text"
             android:singleLine="true"
-            android:text="https://www.baidu.com" />
+            android:text="http://question.yunjiai.cn/question/result?id=5cd0ee1645ce525d5bdfa75d" />
 
         <WebView
             android:id="@+id/webView"

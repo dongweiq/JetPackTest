@@ -3,25 +3,47 @@ package com.honghe.jetpacktest;
 import android.content.Context;
 import android.util.Log;
 
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MqttTest {
+public class MqttHelper {
     private static final String TAG = "whh";
-    private static final String topic = "testtopic";
-    public static MqttAndroidClient mqttClient = null;
+    private MqttAndroidClient mqttClient = null;
+    private static MqttHelper instance = null;
 
-    public static MqttAndroidClient ConnectMqtt(Context context) {
+    public static MqttHelper getInstance() {
+        if (instance == null) {
+            instance = new MqttHelper();
+        }
+        return instance;
+    }
+
+    public MqttHelper ConnectAndPublishMqtt(Context context, String host, String topic, String msg) {
         MqttAndroidClient client = new MqttAndroidClient(context,
-                "ssl://172.81.231.145:8883", "wanghonghe");
-        client.setCallback(new MqttCallback() {
+                host, "wanghh");
+        client.setCallback(new MqttCallbackExtended() {
+
+            @Override
+            public void connectComplete(boolean b, String s) {
+                Log.e(TAG, "connectComplete: " + s);
+                MqttMessage mqttMessage = new MqttMessage(msg.getBytes());
+                try {
+                    if (null != mqttClient) {
+                        mqttClient.publish(topic, mqttMessage);
+                    }
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+            }
+
             @Override
             public void connectionLost(Throwable throwable) {
-                Log.e(TAG, "connectionLost: " + throwable.getMessage());
             }
 
             @Override
@@ -33,6 +55,7 @@ public class MqttTest {
             public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
                 try {
                     Log.e(TAG, "deliveryComplete: " + iMqttDeliveryToken.getMessage().toString());
+                    mqttClient.disconnect();
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
@@ -48,22 +71,7 @@ public class MqttTest {
             e.printStackTrace();
         }
         mqttClient = client;
-        return client;
+        return this;
     }
 
-    public static void publish(String topic, String msg) {
-        if (null != mqttClient) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    MqttMessage mqttMessage = new MqttMessage(msg.getBytes());
-                    try {
-                        mqttClient.publish(topic, mqttMessage);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-    }
 }
