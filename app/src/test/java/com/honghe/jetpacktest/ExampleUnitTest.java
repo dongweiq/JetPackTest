@@ -30,7 +30,9 @@ public class ExampleUnitTest {
 
     @Test
     public void TestThingUrl() {
-        String thingUrl = "http://api.sp.yunjichina.com.cn/api/orders/new#a=b#list=[{\"good\" : \"5ca1bc914e9c4721b0002b21\",\"amount\" : 1}]&mobile=13521633047&positon=5b7e256ec63fc53416ee31af&positionTitle=101&store=5a56fb202b317855f59dd10d&user=5b190366220ded50ec560e92&isInvoices=false&payment=wechat#post";
+//        String thingUrl = "http://api.mp.yunjichina.com.cn/openapi/robots/actions/call#a=b#productId=WATER-C1Q5-00219&robotType=WATER&target=charge_port&type=guide&commander=YUNFAN-M2H3-00018#post";
+//        String thingUrl = "http://wt31447-49375089.monitor.yunjichina.com.cn:9001/api/move#a=b#markers=w001,w002,w003,w004,w005,w006,w007,w008,w009&count=1#get";
+        String thingUrl = "http://api.mp.yunjichina.com.cn/openapi/robots/actions/call#a=b#productId=WATER-C1Q5-00219&robotType=WATER&target=w102&type=guide&commander=YUNFAN-M2H3-00018#post";
         httpThingConrol(thingUrl);
 
     }
@@ -111,7 +113,7 @@ public class ExampleUnitTest {
             String host = mqttUrl[1];
             String topic = mqttUrl[2];
             String msg = mqttUrl[3];
-            MqttHelper.getInstance().ConnectMqtt(MyApp.context, host).publish(topic, msg);
+            MqttHelper.getInstance().ConnectAndPublishMqtt(MyApp.context, host, topic, msg);
         } catch (Exception e) {
             e.printStackTrace();
         }

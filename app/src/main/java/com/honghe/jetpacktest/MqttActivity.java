@@ -25,6 +25,9 @@ public class MqttActivity extends AppCompatActivity {
             case R.id.subscribe:
                 mqttTest();
                 break;
+            case R.id.stop:
+                mqttStop();
+                break;
             case R.id.sendMsg:
                 MqttTest.publish("test", "hello");
                 break;
@@ -33,6 +36,10 @@ public class MqttActivity extends AppCompatActivity {
 
     public void mqttTest() {
         String mqttString = "mqtt#ssl://emqssl.yunjichina.com.cn:8883#tvplayer#start";
+        mqttSend(mqttString);
+    }
+    public void mqttStop() {
+        String mqttString = "mqtt#ssl://emqssl.yunjichina.com.cn:8883#tvplayer#stop";
         mqttSend(mqttString);
     }
 

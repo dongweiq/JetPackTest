@@ -55,8 +55,10 @@ public class MqttHelper {
             public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
                 try {
                     Log.e(TAG, "deliveryComplete: " + iMqttDeliveryToken.getMessage().toString());
-                    mqttClient.disconnect();
-                } catch (MqttException e) {
+                    if (mqttClient.isConnected()) {
+                        mqttClient.disconnect();
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

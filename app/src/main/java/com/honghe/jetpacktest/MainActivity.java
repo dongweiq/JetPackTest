@@ -1,22 +1,14 @@
 package com.honghe.jetpacktest;
 
-import android.app.Application;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.AssetManager;
-import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Looper;
-import android.os.SystemClock;
-import android.print.PrintManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -182,6 +174,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.mqttTest:
                 startActivity(new Intent(this, MqttActivity.class));
+                break;
+            case R.id.a2dpConnect:
+                startActivity(new Intent(this, A2dpConnectActivity.class));
                 break;
         }
     }

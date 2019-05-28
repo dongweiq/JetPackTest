@@ -119,6 +119,12 @@
                 android:layout_height="wrap_content"
                 android:onClick="onclick"
                 android:text="mqttTest" />
+            <Button
+                android:id="@+id/a2dpConnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclick"
+                android:text="a2dpConnect" />
         </LinearLayout>
 
         <LinearLayout
