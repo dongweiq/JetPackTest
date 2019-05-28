@@ -3,11 +3,9 @@ package com.honghe.jetpacktest;
 import android.app.Activity;
 import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
-import android.widget.Toast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
