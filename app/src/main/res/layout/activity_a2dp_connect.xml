@@ -25,6 +25,12 @@
             android:layout_height="wrap_content"
             android:onClick="onclick"
             android:text="扫描蓝牙" />
+        <Button
+            android:id="@+id/btn_show_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onclick"
+            android:text="显示操作栏" />
 
         <Button
             android:id="@+id/btn_stop_scan"

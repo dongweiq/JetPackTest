@@ -43,9 +43,12 @@ public class A2dpConnectActivity extends AppCompatActivity {
                 A2dpConnectionHelper.getInstance().init(A2dpConnectActivity.this);
                 break;
             case R.id.btn_scan:
-                bluetoothDevicesAdapter.setData(A2dpConnectionHelper.getInstance().searchDevices());
+                bluetoothDevicesAdapter.setData(A2dpConnectionHelper.getInstance().init(A2dpConnectActivity.this).searchDevices());
                 break;
             case R.id.btn_stop_scan:
+                break;
+            case R.id.btn_show_bar:
+                sendBroadcast(new Intent("com.android.systembar.show"));
                 break;
         }
     }
@@ -69,12 +72,16 @@ public class A2dpConnectActivity extends AppCompatActivity {
                 int state = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, BluetoothA2dp.STATE_DISCONNECTED);
                 switch (state) {
                     case BluetoothA2dp.STATE_CONNECTED:
+                        A2dpConnectionHelper.getInstance().init(A2dpConnectActivity.this).setLastBluetoothDevice(device);
                         statStr += "已连接";
                         break;
                     case BluetoothA2dp.STATE_CONNECTING:
                         statStr += "连接中";
                         break;
                     case BluetoothA2dp.STATE_DISCONNECTED:
+                        if (null != A2dpConnectionHelper.getInstance().getLastBluetoothDevice() && device.getAddress().equals(A2dpConnectionHelper.getInstance().getLastBluetoothDevice().getAddress())) {
+                            A2dpConnectionHelper.getInstance().init(A2dpConnectActivity.this).setLastBluetoothDevice(null);
+                        }
                         statStr += "断开连接";
                         break;
                     case BluetoothA2dp.STATE_DISCONNECTING:

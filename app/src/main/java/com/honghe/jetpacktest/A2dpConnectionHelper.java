@@ -16,6 +16,7 @@ public class A2dpConnectionHelper implements BluetoothProfile.ServiceListener {
     private BluetoothAdapter mBtAdapter;
     public static A2dpConnectionHelper instance;
     private Activity activity;
+    private BluetoothDevice lastBluetoothDevice;
 
     public static A2dpConnectionHelper getInstance() {
         if (null == instance) {
@@ -25,19 +26,33 @@ public class A2dpConnectionHelper implements BluetoothProfile.ServiceListener {
     }
 
 
-    public void init(Activity context) {
-        this.activity = context;
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!mBtAdapter.isEnabled()) {
-            //弹出对话框提示用户是后打开
-            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            context.startActivityForResult(enabler, 1);
-        }
+    public A2dpConnectionHelper init(Activity context) {
+        if (null == this.activity) {
+            this.activity = context;
+            mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (!mBtAdapter.isEnabled()) {
+                //弹出对话框提示用户是后打开
+                Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                context.startActivityForResult(enabler, 1);
+            }
 //获取A2DP代理对象
-        mBtAdapter.getProfileProxy(context, this, BluetoothProfile.A2DP);
+            mBtAdapter.getProfileProxy(context, this, BluetoothProfile.A2DP);
+        }
+        return this;
+    }
+
+    public void setLastBluetoothDevice(BluetoothDevice device) {
+        this.lastBluetoothDevice = device;
+    }
+
+    public BluetoothDevice getLastBluetoothDevice() {
+        return this.lastBluetoothDevice;
     }
 
     public void connectA2dp(BluetoothDevice device) {
+        if (null != lastBluetoothDevice) {
+            disConnectA2dp(lastBluetoothDevice);
+        }
         setPriority(device, 100); //设置priority
         try {
             //通过反射获取BluetoothA2dp中connect方法（hide的），进行连接。
@@ -50,14 +65,16 @@ public class A2dpConnectionHelper implements BluetoothProfile.ServiceListener {
     }
 
     public void disConnectA2dp(BluetoothDevice device) {
-        setPriority(device, 0);
-        try {
-            //通过反射获取BluetoothA2dp中connect方法（hide的），断开连接。
-            Method connectMethod = BluetoothA2dp.class.getMethod("disconnect",
-                    BluetoothDevice.class);
-            connectMethod.invoke(mA2dp, device);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (null != device) {
+            setPriority(device, 0);
+            try {
+                //通过反射获取BluetoothA2dp中connect方法（hide的），断开连接。
+                Method connectMethod = BluetoothA2dp.class.getMethod("disconnect",
+                        BluetoothDevice.class);
+                connectMethod.invoke(mA2dp, device);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -93,7 +110,7 @@ public class A2dpConnectionHelper implements BluetoothProfile.ServiceListener {
         Set<BluetoothDevice> bondDevices = mBtAdapter.getBondedDevices();
         for (BluetoothDevice device : bondDevices) {
 //            if (device.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO) {
-                bluetoothDevices.add(device);
+            bluetoothDevices.add(device);
 //            }
         }
         return bluetoothDevices;
